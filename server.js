@@ -23,7 +23,8 @@ app.use('/api/tasks', taskRoutes);
 const donationRoutes = require('./routes/donationRoutes');
 app.use('/api/donations', donationRoutes);  
 
-
+const skillRoutes = require('./routes/skillRoutes');
+app.use('/api/skills', skillRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

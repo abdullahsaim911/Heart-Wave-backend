@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   skills: { type: [String], default: [] },
   resources: { type: [String], default: [] },
   organization: { type: String, default: '' },
+  address: { type: String, default: '' },
+  phone: { type: String, default: '' },
   location: {
     type: {
       lat: { type: Number, required: false },
