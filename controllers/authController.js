@@ -13,7 +13,7 @@ exports.registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({ name, email, password: hashedPassword, role, location });
+    const user = new User({ name, "email": email.toLowerCase(), password: hashedPassword, role, location });
     await user.save();
 
     const token = jwt.sign(
@@ -34,14 +34,20 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  
+  const normalizedEmail = email.toLowerCase();
+
   try {
-    const user = await User.findOne({ email });
+    
+    const user = await User.findOne({ email: normalizedEmail });
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     
     const isMatch = await bcrypt.compare(password, user.password);
+    
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }

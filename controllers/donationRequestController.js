@@ -31,3 +31,14 @@ exports.getAllDonationRequests = async (req, res) => {
     res.status(500).json({ message: 'Error fetching donation requests' });
   }
 };
+
+exports.getMyDonationRequests = async (req, res) => {
+    try {
+      const requests = await DonationRequest.find({ requestedBy: req.user.userId }).populate('requestedBy', 'name email');
+      res.status(200).json(requests);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error fetching your donation requests' });
+    }
+  };
+  
