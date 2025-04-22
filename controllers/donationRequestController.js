@@ -41,4 +41,25 @@ exports.getMyDonationRequests = async (req, res) => {
       res.status(500).json({ message: 'Error fetching your donation requests' });
     }
   };
+
+  exports.getMyDonationRequestById = async (req, res) => {
+    const { requestId } = req.params;
+  
+    try {
+      const request = await DonationRequest.findOne({
+        _id: requestId,
+        requestedBy: req.user.userId
+      }).populate('requestedBy', 'name email');
+  
+      if (!request) {
+        return res.status(403).json({ message: 'You are not authorized to view this request' });
+      }
+  
+      res.status(200).json(request);
+    } catch (error) {
+      console.error('Error fetching request:', error);
+      res.status(500).json({ message: 'Error fetching donation request' });
+    }
+  };
+  
   

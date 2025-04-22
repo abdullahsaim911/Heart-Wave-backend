@@ -24,6 +24,28 @@ exports.createTask = async (req, res) => {
     }
   };
 
+
+  exports.getMyTaskById = async (req, res) => {
+    const { taskId } = req.params;
+  
+    try {
+      const task = await Task.findOne({
+        _id: taskId,
+        createdBy: req.user.userId,  
+      }).populate('createdBy', 'name email');
+  
+      if (!task) {
+        return res.status(403).json({ message: 'You are not authorized to view this task' });
+      }
+  
+      res.status(200).json(task);
+    } catch (error) {
+      console.error('Error fetching task:', error);
+      res.status(500).json({ message: 'Error fetching task' });
+    }
+  };
+  
+
   exports.updateTask = async (req, res) => {
     const { taskId } = req.params;  
     const { title, description, location, skillsRequired, urgency } = req.body;
@@ -72,6 +94,41 @@ exports.getAllTasks = async (req, res) => {
     res.status(500).json({ message: 'Error fetching tasks' });
   }
 };
+
+
+exports.getTaskById = async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    const task = await Task.findById(taskId).populate('createdBy', 'name email');
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.error('Error fetching task:', error);
+    res.status(500).json({ message: 'Error fetching task' });
+  }
+};
+
+
+exports.getMyTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ createdBy: req.user.userId });
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ message: 'No tasks found for this NGO' });
+    }
+
+    res.status(200).json({ tasks });
+  } catch (error) {
+    console.error("Error fetching NGO tasks:", error);
+    res.status(500).json({ message: 'Error fetching your tasks' });
+  }
+};
+
 
 
 
