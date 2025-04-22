@@ -13,14 +13,21 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   location: {
     type: {
-      lat: { type: Number, required: false },
-      lng: { type: Number, required: false }
+      type: String,
+      enum: ['Point'],
+      required: true,
+      default: 'Point'
     },
-    default: { lat: 0, lng: 0 }  
+    coordinates: {
+      type: [Number], 
+      required: true
+    }
   },
   availability: { type: [String], default: [] },
   profileImage: { type: String, default: '' },
 }, { timestamps: true });
+
+userSchema.index({ location: '2dsphere' });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
