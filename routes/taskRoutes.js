@@ -14,6 +14,7 @@ router.get('/', authMiddleware, getAllTasks); //GET /api/tasks
 
 
 router.get('/:taskId', authMiddleware, getTaskById); //GET /api/tasks/:taskId
+
 router.get('/my/:taskId', authMiddleware, roleMiddleware('ngo'), getMyTaskById); //GET /api/tasks/my/:taskId
 
 

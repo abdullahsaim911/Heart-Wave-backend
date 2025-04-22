@@ -3,10 +3,14 @@ const { createDonation, getAllDonations, claimDonation } = require('../controlle
 const { authMiddleware } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-router.post('/', authMiddleware, createDonation);
+router.post('/', authMiddleware, createDonation); //POST /api/donations
 
-router.get('/', authMiddleware, getAllDonations);
+router.get('/', authMiddleware, getAllDonations); // GET /api/donations
 
-router.post('/claim', authMiddleware, claimDonation);
+
+
+router.post('/claim', authMiddleware, claimDonation); //POST /api/donations/claim
+
+
 
 module.exports = router;
