@@ -1,4 +1,4 @@
-// models/userModel.js
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
       lat: { type: Number, required: false },
       lng: { type: Number, required: false }
     },
-    default: { lat: 0, lng: 0 }  // You can set a default location if not provided
+    default: { lat: 0, lng: 0 }  
   },
   availability: { type: [String], default: [] },
   profileImage: { type: String, default: '' },

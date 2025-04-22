@@ -1,10 +1,9 @@
-// models/donationHistoryModel.js
 const mongoose = require('mongoose');
 
 const donationHistorySchema = new mongoose.Schema({
-  donationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Donation' },  // Reference to Donation
-  donorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // Reference to the Donor
-  donationDate: { type: Date, default: Date.now },  // Date of donation
+  donationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Donation' },  
+  donorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  
+  donationDate: { type: Date, default: Date.now },  
 }, { timestamps: true });
 
 const DonationHistory = mongoose.model('DonationHistory', donationHistorySchema);
