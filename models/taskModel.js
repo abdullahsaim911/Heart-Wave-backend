@@ -6,17 +6,17 @@ const taskSchema = new mongoose.Schema({
   description: { type: String, required: true },
   address: { type: String, required: true },
   date: { type: Date, required: true },
-  time: { type: String, required: true },
+  availability: { type: String },
   location: {
     type: {
       type: String,
       enum: ['Point'],
-      required: true,
+      required: false,
       default: 'Point'
     },
     coordinates: {
       type: [Number], 
-      required: true
+      required: false
     }
   },
   skillsRequired: { type: [String], required: true },
@@ -25,6 +25,10 @@ const taskSchema = new mongoose.Schema({
     enum: ['high', 'medium', 'low'],
     required: true,
   },
+  
+  completed: { type: Boolean, default: false },  
+
+  applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   assignedVolunteer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });

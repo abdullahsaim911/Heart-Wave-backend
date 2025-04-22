@@ -1,10 +1,15 @@
 const express = require('express');
-const { getCompletedTasksByNgo ,createTask, getAllTasks, getTaskById, assignTask, getMyTaskById ,updateTask, deleteTask, getMyTasks } = require('../controllers/taskController');
+const { getCompletedTasks ,applyForTask,getCompletedTasksByNgo ,createTask, getAllTasks, getTaskById, assignTask, getMyTaskById ,updateTask, deleteTask, getMyTasks } = require('../controllers/taskController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { roleMiddleware } = require('../middleware/roleMiddleware');
 const router = express.Router();
 
 
+// GET /api/tasks/completed 
+router.get('/completed', authMiddleware, getCompletedTasks); 
+
+
+router.post('/:taskId/apply', authMiddleware,roleMiddleware('volunteer'), applyForTask); // POST /api/tasks/:taskId/apply
 
 
 router.get('/mine', authMiddleware, roleMiddleware('ngo'), getMyTasks); //GET /api/tasks/mine

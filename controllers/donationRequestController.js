@@ -1,4 +1,5 @@
 const DonationRequest = require('../models/donationRequestModel');
+const User = require('../models/userModel');
 
 exports.createDonationRequest = async (req, res) => {
     const { title, type, description, location, urgency, address } = req.body;

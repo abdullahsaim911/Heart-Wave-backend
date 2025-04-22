@@ -1,4 +1,5 @@
 const Task = require('../models/taskModel');
+const User = require('../models/userModel');
 
 
 exports.createTask = async (req, res) => {
@@ -21,6 +22,53 @@ exports.createTask = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error creating task' });
+    }
+  };
+
+
+  exports.getCompletedTasks = async (req, res) => {
+    const userId = req.user.userId;  
+  
+    try {
+      
+      const tasks = await Task.find({
+        assignedVolunteer: userId,
+        completed: true,  
+      });
+  
+      
+      if (!tasks || tasks.length === 0) {
+        return res.status(404).json({ message: 'No completed tasks found' });
+      }
+  
+      res.status(200).json({ tasks });
+    } catch (error) {
+      console.error('Error fetching completed tasks:', error);
+      res.status(500).json({ message: 'Error fetching completed tasks' });
+    }
+  };
+
+  exports.applyForTask = async (req, res) => {
+    const { taskId } = req.params; 
+    const userId = req.user.userId; 
+  
+    try {
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ message: 'Task not found' });
+      }
+  
+      if (task.applicants.includes(userId)) {
+        return res.status(400).json({ message: 'You have already applied for this task' });
+      }
+  
+      task.applicants.push(userId);
+      await task.save();
+  
+      res.status(200).json({ message: 'You have successfully applied for the task', task });
+    } catch (error) {
+      console.error("Error applying for task:", error);
+      res.status(500).json({ message: 'Error applying for task' });
     }
   };
 
@@ -78,16 +126,49 @@ exports.createTask = async (req, res) => {
   };
 
   
+// exports.getAllTasks = async (req, res) => {
+//   try {
+
+//     const tasks = await Task.find();  
+
+//     if (!tasks || tasks.length === 0) {
+//       return res.status(404).json({ message: 'No tasks available' });
+//     }
+
+    
+//     res.status(200).json({ tasks });
+//   } catch (error) {
+//     console.error("Error fetching tasks:", error);
+//     res.status(500).json({ message: 'Error fetching tasks' });
+//   }
+// };
+
+
+
 exports.getAllTasks = async (req, res) => {
   try {
+    const { availability } = req.query;
 
-    const tasks = await Task.find();  
+    let query = { completed: false };
+
+    if (availability) {
+      const [startTime, endTime] = availability.split(',');  
+      query = {
+        ...query,
+        availability: {
+          $gte: startTime,
+          $lte: endTime,
+        },
+      };
+    }
+
+    
+    const tasks = await Task.find(query);
 
     if (!tasks || tasks.length === 0) {
       return res.status(404).json({ message: 'No tasks available' });
     }
 
-    
     res.status(200).json({ tasks });
   } catch (error) {
     console.error("Error fetching tasks:", error);
