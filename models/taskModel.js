@@ -4,9 +4,20 @@ const mongoose = require('mongoose');
 const taskSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
+  address: { type: String, required: true },
+  date: { type: Date, required: true },
+  time: { type: String, required: true },
   location: {
-    type: { type: String, enum: ['Point'], required: true },  
-    coordinates: { type: [Number], required: true },  
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number], 
+      required: true
+    }
   },
   skillsRequired: { type: [String], required: true },
   urgency: {

@@ -2,7 +2,7 @@ const Task = require('../models/taskModel');
 
 
 exports.createTask = async (req, res) => {
-    const { title, description, location, skillsRequired, urgency } = req.body;
+    const { title, description, location, skillsRequired, urgency, date, time } = req.body;
   
     try {
       const task = new Task({
@@ -11,6 +11,8 @@ exports.createTask = async (req, res) => {
         location,
         skillsRequired,
         urgency,
+        date,
+        time,
         createdBy: req.user.userId,  
       });
   

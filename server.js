@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cors = require('cors');
 
+
 dotenv.config();  
 
 const app = express();
@@ -25,6 +26,9 @@ app.use('/api/donations', donationRoutes);
 
 const skillRoutes = require('./routes/skillRoutes');
 app.use('/api/skills', skillRoutes);
+
+const donationRequestRoutes = require('./routes/donationRequestRoutes');
+app.use('/api/donation-requests', donationRequestRoutes); 
 
 app.get('/', (req, res) => {
   res.send('API is running...');
