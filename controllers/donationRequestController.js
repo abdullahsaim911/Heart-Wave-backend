@@ -22,6 +22,38 @@ exports.createDonationRequest = async (req, res) => {
     }
 };
 
+exports.getInterestedUsers = async (req, res) => {
+    const { requestId } = req.params;  
+  
+    try {
+      
+      const donationRequest = await DonationRequest.findById(requestId).populate('applicants', 'name email');
+  
+      if (!donationRequest) {
+        return res.status(404).json({ message: 'Donation request not found' });
+      }
+  
+      
+      res.status(200).json({ interestedUsers: donationRequest.applicants });
+    } catch (error) {
+      console.error('Error fetching interested users:', error);
+      res.status(500).json({ message: 'Error fetching interested users for donation request' });
+    }
+  };
+
+  exports.getCompletedDonationRequestsByNgo = async (req, res) => {
+    try {
+      const completedDonationRequests = await DonationRequest.find({
+        requestedBy: req.user.userId,
+        completed: true
+      });
+      res.status(200).json({ completedDonationRequests });
+    } catch (error) {
+      console.error("Error fetching completed donation requests:", error);
+      res.status(500).json({ message: 'Error fetching completed donation requests' });
+    }
+  };
+
 exports.getAllDonationRequests = async (req, res) => {
     try {
         const requests = await DonationRequest.find().populate('requestedBy', 'name email');
@@ -61,6 +93,63 @@ exports.updateDonationRequest = async (req, res) => {
     res.status(500).json({ message: 'Error updating donation request' });
   }
 };
+
+exports.acceptDonation = async (req, res) => {
+    const { requestId, donorId } = req.body;  
+  
+    try {
+      
+      const donationRequest = await DonationRequest.findById(requestId);
+  
+      if (!donationRequest) {
+        return res.status(404).json({ message: 'Donation request not found' });
+      }
+  
+      
+      if (req.user.role !== 'ngo') {
+        return res.status(403).json({ message: 'Only NGOs can accept donations' });
+      }
+  
+      
+      if (!donationRequest.applicants.includes(donorId)) {
+        return res.status(400).json({ message: 'This donor has not applied for this donation request' });
+      }
+  
+      
+      if (donationRequest.acceptedDonations.includes(donorId)) {
+        return res.status(400).json({ message: 'This donation has already been accepted by the NGO' });
+      }
+  
+      
+      donationRequest.acceptedDonations.push(donorId);
+      await donationRequest.save();
+  
+      res.status(200).json({ message: 'Donation accepted successfully', donationRequest });
+    } catch (error) {
+      console.error('Error accepting donation:', error);
+      res.status(500).json({ message: 'Error accepting donation' });
+    }
+  };
+
+
+  exports.getAcceptedDonations = async (req, res) => {
+    const { requestId } = req.params;  
+    
+    try {
+      const donationRequest = await DonationRequest.findById(requestId).populate('acceptedDonations', 'name email');
+  
+      if (!donationRequest) {
+        return res.status(404).json({ message: 'Donation request not found' });
+      }
+  
+      res.status(200).json({ acceptedDonations: donationRequest.acceptedDonations });
+    } catch (error) {
+      console.error('Error fetching accepted donations:', error);
+      res.status(500).json({ message: 'Error fetching accepted donations' });
+    }
+  };
+  
+
 
 exports.deleteDonationRequest = async (req, res) => {
     const { requestId } = req.params;

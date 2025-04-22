@@ -19,7 +19,10 @@ const donationRequestSchema = new mongoose.Schema({
         enum: ['high', 'medium', 'low'],
         required: true
     },
+    completed: { type: Boolean, default: false },  
     requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],  
+    acceptedDonations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]  
 }, { timestamps: true });
 
 donationRequestSchema.index({ location: '2dsphere' });

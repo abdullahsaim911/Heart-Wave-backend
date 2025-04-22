@@ -1,9 +1,15 @@
 const express = require('express');
-const {deleteDonationRequest ,updateDonationRequest ,getDonationRequestById , createDonationRequest, getAllDonationRequests,getMyDonationRequests ,getMyDonationRequestById } = require('../controllers/donationRequestController');
+const {getCompletedDonationRequestsByNgo,getInterestedUsers ,getAcceptedDonations,acceptDonation ,deleteDonationRequest ,updateDonationRequest ,getDonationRequestById , createDonationRequest, getAllDonationRequests,getMyDonationRequests ,getMyDonationRequestById } = require('../controllers/donationRequestController');
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { roleMiddleware } = require('../middleware/roleMiddleware');
 
 const router = express.Router();
+
+// GET /api/donation-requests/interested/:requestId
+router.get('/interested/:requestId', authMiddleware, getInterestedUsers);  
+
+// GET /api/donation-requests/completed
+router.get('/completed', authMiddleware, roleMiddleware('ngo'), getCompletedDonationRequestsByNgo);  
 
 //POST /api/donation-requests
 router.post('/', authMiddleware, roleMiddleware('ngo'), createDonationRequest);
@@ -17,6 +23,9 @@ router.get('/mine', authMiddleware, roleMiddleware('ngo'), getMyDonationRequests
 //GET /api/donation-requests/my/:requestId
 router.get('/my/:requestId', authMiddleware, roleMiddleware('ngo'), getMyDonationRequestById); 
 
+// POST /api/donation-requests/accept
+router.post('/accept', authMiddleware, roleMiddleware('ngo'), acceptDonation);  
+
 
 //PUT /api/donation-requests/update/:requestId
 router.put('/update/:requestId', authMiddleware, roleMiddleware('ngo'), updateDonationRequest); 
@@ -27,6 +36,10 @@ router.get('/:requestId', authMiddleware, getDonationRequestById);
 
 //DELETE /api/donation-requests/:requestId
 router.delete('/:requestId', authMiddleware, roleMiddleware('ngo'), deleteDonationRequest);
+
+ // GET /api/donation-requests/accepted/:requestId
+router.get('/accepted/:requestId', authMiddleware, roleMiddleware('ngo'), getAcceptedDonations); 
+
 
 
 

@@ -9,6 +9,7 @@ const donationSchema = new mongoose.Schema({
   },
   urgency: { type: String, enum: ['medium', 'high','low'], default: 'low' },
   donor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  
+
   claimedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  
 }, { timestamps: true });
 

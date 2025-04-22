@@ -68,4 +68,14 @@ exports.claimDonation = async (req, res) => {
       res.status(500).json({ message: 'Error claiming donation' });
     }
   };
+
+  exports.getDonationClaimsByNgo = async (req, res) => {
+    try {
+      const donationClaims = await Donation.find({ claimedBy: req.user.userId });
+      res.status(200).json({ donationClaims });
+    } catch (error) {
+      console.error("Error fetching donation claims:", error);
+      res.status(500).json({ message: 'Error fetching donation claims' });
+    }
+  };
   

@@ -129,8 +129,15 @@ exports.getMyTasks = async (req, res) => {
   }
 };
 
-
-
+exports.getCompletedTasksByNgo = async (req, res) => {
+  try {
+    const completedTasks = await Task.find({ createdBy: req.user.userId, completed: true });
+    res.status(200).json({ completedTasks });
+  } catch (error) {
+    console.error('Error fetching completed tasks:', error);
+    res.status(500).json({ message: 'Error fetching completed tasks' });
+  }
+};
 
 
   exports.deleteTask = async (req, res) => {
