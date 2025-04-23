@@ -78,4 +78,44 @@ exports.claimDonation = async (req, res) => {
       res.status(500).json({ message: 'Error fetching donation claims' });
     }
   };
+
+
+  exports.getUnclaimedDonationsByDonor = async (req, res) => {
+    try {
+      const donorId = req.user.userId;
+  
+      const unclaimedDonations = await Donation.find({
+        donor: donorId,
+        claimedBy: { $exists: false } 
+      });
+  
+      if (!unclaimedDonations || unclaimedDonations.length === 0) {
+        return res.status(404).json({ message: 'No unclaimed donations found' });
+      }
+  
+      res.status(200).json({ donations: unclaimedDonations });
+    } catch (error) {
+      console.error("Error fetching unclaimed donations:", error);
+      res.status(500).json({ message: 'Error fetching unclaimed donations' });
+    }
+  };
+
+
+  exports.getDonationById = async (req, res) => {
+    const { donationId } = req.params;
+  
+    try {
+      const donation = await Donation.findById(donationId)
+        .populate('donor', 'name email')  
+        .populate('claimedBy', 'name email'); 
+      if (!donation) {
+        return res.status(404).json({ message: 'Donation not found' });
+      }
+  
+      res.status(200).json(donation);
+    } catch (error) {
+      console.error('Error fetching donation:', error);
+      res.status(500).json({ message: 'Error fetching donation' });
+    }
+  };
   

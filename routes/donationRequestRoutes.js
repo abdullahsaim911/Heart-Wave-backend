@@ -1,9 +1,23 @@
 const express = require('express');
-const {getCompletedDonationRequestsByNgo,getInterestedUsers ,getAcceptedDonations,acceptDonation ,deleteDonationRequest ,updateDonationRequest ,getDonationRequestById , createDonationRequest, getAllDonationRequests,getMyDonationRequests ,getMyDonationRequestById } = require('../controllers/donationRequestController');
+
+const {getCompletedDonationRequestsByNgo,getInterestedUsers ,
+getAllDonationRequestsByNGOs,getAcceptedDonations,getPendingDonationRequestById ,
+acceptDonation ,deleteDonationRequest ,updateDonationRequest ,
+getDonationRequestById , createDonationRequest, getAllDonationRequests,
+getMyDonationRequests ,getMyDonationRequestById } = require('../controllers/donationRequestController');
+
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { roleMiddleware } = require('../middleware/roleMiddleware');
 
 const router = express.Router();
+
+// GET /api/donation-requests/all-ngos 
+// Public or Authenticated Access
+router.get('/all-ngos', authMiddleware, getAllDonationRequestsByNGOs);
+
+//GET	/api/donation-requests/view/:requestId
+router.get('/view/:requestId', authMiddleware, getPendingDonationRequestById);
+
 
 // GET /api/donation-requests/interested/:requestId
 router.get('/interested/:requestId', authMiddleware, getInterestedUsers);  

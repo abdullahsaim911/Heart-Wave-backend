@@ -23,6 +23,43 @@ exports.createDonationRequest = async (req, res) => {
     }
 };
 
+exports.getPendingDonationRequestById = async (req, res) => {
+    const { requestId } = req.params;
+  
+    try {
+      const donationRequest = await DonationRequest.findOne({
+        _id: requestId,
+        completed: false
+      }).populate('requestedBy', 'name email');
+  
+      if (!donationRequest) {
+        return res.status(404).json({ message: 'Donation request not found or already completed' });
+      }
+  
+      res.status(200).json(donationRequest);
+    } catch (error) {
+      console.error('Error fetching donation request:', error);
+      res.status(500).json({ message: 'Error fetching donation request' });
+    }
+  };
+
+
+exports.getAllDonationRequestsByNGOs = async (req, res) => {
+    try {
+      const donationRequests = await DonationRequest.find()
+        .populate('requestedBy', 'name email role'); 
+  
+      if (!donationRequests || donationRequests.length === 0) {
+        return res.status(404).json({ message: 'No donation requests found' });
+      }
+  
+      res.status(200).json({ donationRequests });
+    } catch (error) {
+      console.error("Error fetching donation requests:", error);
+      res.status(500).json({ message: 'Error fetching donation requests' });
+    }
+  };
+
 exports.getInterestedUsers = async (req, res) => {
     const { requestId } = req.params;  
   

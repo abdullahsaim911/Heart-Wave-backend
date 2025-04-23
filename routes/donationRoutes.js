@@ -1,6 +1,9 @@
 const express = require('express');
-const { getDonationClaimsByNgo ,createDonation, getAllDonations, claimDonation } = require('../controllers/donationController');
+const { getDonationClaimsByNgo ,createDonation, 
+getUnclaimedDonationsByDonor ,getAllDonations,
+getDonationById , claimDonation } = require('../controllers/donationController');
 const { authMiddleware } = require('../middleware/authMiddleware');
+const { roleMiddleware } = require('../middleware/roleMiddleware');
 const router = express.Router();
 
 router.post('/', authMiddleware, createDonation); //POST /api/donations
@@ -11,6 +14,10 @@ router.get('/claims', authMiddleware, roleMiddleware('ngo'), getDonationClaimsBy
 
 router.post('/claim', authMiddleware, claimDonation); //POST /api/donations/claim
 
+// GET /api/donations/unclaimed-by-me
+router.get('/unclaimed-by-me', authMiddleware, getUnclaimedDonationsByDonor);
+
+router.get('/:donationId', authMiddleware,roleMiddleware('donor ') ,getDonationById); // GET /api/donations/:donationId
 
 
 module.exports = router;
