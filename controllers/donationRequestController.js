@@ -23,6 +23,33 @@ exports.createDonationRequest = async (req, res) => {
     }
 };
 
+exports.applyForDonationRequest = async (req, res) => {
+    const { requestId } = req.params; 
+    const donorId = req.user.userId; 
+  
+    try {
+      const donationRequest = await DonationRequest.findById(requestId);
+  
+      if (!donationRequest) {
+        return res.status(404).json({ message: 'Donation request not found' });
+      }
+  
+      if (donationRequest.applicants.includes(donorId)) {
+        return res.status(400).json({ message: 'You have already applied for this donation request' });
+      }
+  
+      donationRequest.applicants.push(donorId);
+  
+
+      await donationRequest.save();
+  
+      res.status(200).json({ message: 'Successfully applied for the donation request' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error applying for donation request' });
+    }
+  };
+
 exports.getPendingDonationRequestById = async (req, res) => {
     const { requestId } = req.params;
   
@@ -267,4 +294,23 @@ exports.getMyDonationRequestById = async (req, res) => {
     }
 };
 
+
+exports.getDonationRequestsByDonor = async (req, res) => {
+  const donorId = req.user.userId;  
+  try {
+    
+    const donationRequests = await DonationRequest.find({
+      acceptedDonations: donorId  
+    }).populate('requestedBy', 'name email')  
+      .populate('acceptedDonations', 'name email');  
+    if (!donationRequests || donationRequests.length === 0) {
+      return res.status(404).json({ message: 'No donation requests found for this donor' });
+    }
+
+    res.status(200).json(donationRequests);
+  } catch (error) {
+    console.error("Error fetching donation requests by donor:", error);
+    res.status(500).json({ message: 'Error fetching donation requests' });
+  }
+};
 

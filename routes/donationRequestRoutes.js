@@ -4,7 +4,8 @@ const {getCompletedDonationRequestsByNgo,getInterestedUsers ,
 getAllDonationRequestsByNGOs,getAcceptedDonations,getPendingDonationRequestById ,
 acceptDonation ,deleteDonationRequest ,updateDonationRequest ,
 getDonationRequestById , createDonationRequest, getAllDonationRequests,
-getMyDonationRequests ,getMyDonationRequestById } = require('../controllers/donationRequestController');
+getMyDonationRequests ,getMyDonationRequestById,
+applyForDonationRequest  } = require('../controllers/donationRequestController');
 
 const { authMiddleware } = require('../middleware/authMiddleware');
 const { roleMiddleware } = require('../middleware/roleMiddleware');
@@ -53,6 +54,10 @@ router.delete('/:requestId', authMiddleware, roleMiddleware('ngo'), deleteDonati
 
  // GET /api/donation-requests/accepted/:requestId
 router.get('/accepted/:requestId', authMiddleware, roleMiddleware('ngo'), getAcceptedDonations); 
+
+// POST /api/donation-requests/:requestId/apply - Donor applies for donation request
+router.post('/:requestId/apply', authMiddleware, applyForDonationRequest);
+
 
 
 
